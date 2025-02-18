@@ -170,7 +170,7 @@ function updateToggleStatus(toggleId, status) {
 }
 
 function sendToggleRequest(toggleId, status) {
-    const apiUrl = toggleId === 1 ? 'http://127.0.0.1:5000/update_lab' : 'http://127.0.0.1:5000/update_gpu';
+    const apiUrl = toggleId === 1 ? 'https://backend-website-api.vercel.app/update_lab' : 'https://backend-website-api.vercel.app/update_gpu';
 
     newValue = status;  // Directly assign boolean value
 
@@ -196,7 +196,7 @@ function sendToggleRequest(toggleId, status) {
 
 // Fetch initial state from the server
 function fetchInitialState() {
-    fetch('http://127.0.0.1:5000/get_items/indication')
+    fetch('https://backend-website-api.vercel.app/get_items/indication')
         .then(response => response.json())
         .then(data => {
             document.getElementById('toggle1').checked = data.keys;
