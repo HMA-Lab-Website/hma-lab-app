@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle Controls</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px; /* Limits width for better readability on mobile */
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 img {
+            max-width: 100%; /* Ensures the image is responsive */
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .toggle-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .toggle-label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196f3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .status-message {
+            color: #666;
+            font-size: 14px;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* Media Queries for Mobile Devices */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 img {
+                max-width: 90%; /* Adjust image size for smaller screens */
+            }
+
+            .toggle-label {
+                font-size: 14px; /* Smaller font size for mobile */
+            }
+
+            .switch {
+                width: 50px;
+                height: 28px;
+            }
+
+            .slider:before {
+                height: 22px;
+                width: 22px;
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(22px);
+            }
+
+            .status-message {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><img src="hma.png" alt="Logo"></h1>
+        <div class="toggle-card">
+            <span class="toggle-label">Lab Status</span>
+            <label class="switch">
+                <input type="checkbox" id="toggle1">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="status-message" id="status1"></div>
+
+        <div class="toggle-card">
+            <span class="toggle-label">GPU</span>
+            <label class="switch">
+                <input type="checkbox" id="toggle2">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="status-message" id="status2"></div>
+    </div>
+
+    <script>
+        let newValue = false;
+
+function updateToggleStatus(toggleId, status) {
+    const statusElement = document.getElementById(`status${toggleId}`);
+    statusElement.textContent = `Status: ${status ? 'ON' : 'OFF'} (Last updated: ${new Date().toLocaleTimeString()})`;
+}
+
+function sendToggleRequest(toggleId, status) {
+    const apiUrl = toggleId === 1 ? 'http://127.0.0.1:5000/update_lab' : 'http://127.0.0.1:5000/update_gpu';
+
+    newValue = status;  // Directly assign boolean value
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: status, value: newValue })  // Send correct boolean values
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(`Toggle ${toggleId} request successful:`, data);
+        updateToggleStatus(toggleId, status);
+    })
+    .catch(error => {
+        console.error(`Toggle ${toggleId} request failed:`, error);
+        // Revert toggle state on error
+        document.getElementById(`toggle${toggleId}`).checked = !status;
+        updateToggleStatus(toggleId, !status);
+    });
+}
+
+// Fetch initial state from the server
+function fetchInitialState() {
+    fetch('http://127.0.0.1:5000/get_items/indication')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('toggle1').checked = data.keys;
+            document.getElementById('toggle2').checked = data.gpu;
+            updateToggleStatus(1, data.keys);
+            updateToggleStatus(2, data.gpu);
+        })
+        .catch(error => {
+            console.error('Failed to fetch initial state:', error);
+        });
+}
+
+// Add event listeners to both toggles
+[1, 2].forEach(id => {
+    const toggle = document.getElementById(`toggle${id}`);
+    toggle.addEventListener('change', (e) => {
+        sendToggleRequest(id, e.target.checked);
+    });
+});
+
+// Fetch initial state when the page loads
+window.onload = fetchInitialState;
+
+    </script>
+</body>
+</html>
