@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toggle Controls</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* General Styles */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             background-color: #f5f5f5;
             display: flex;
             justify-content: center;
@@ -19,34 +19,118 @@
 
         .container {
             width: 100%;
-            max-width: 400px; /* Limits width for better readability on mobile */
+            max-width: 400px;
             background: white;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 10px;
+            box-sizing: border-box;
         }
 
         h1 {
-            text-align: center;
-            margin-bottom: 20px;
+            margin: 0 0 20px 0;
         }
 
         h1 img {
-            max-width: 100%; /* Ensures the image is responsive */
+            max-width: 100%;
             height: auto;
             border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            box-sizing: border-box;
+        }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            padding-right: 40px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            border-color: #2196f3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            font-size: 18px;
+            padding: 5px;
+            z-index: 2;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            background-color: #2196f3;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s;
+            margin: 0 auto;
+        }
+
+        button:hover {
+            background-color: #1976d2;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .toggle-section {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 350px;
+            margin: 20px auto 0;
         }
 
         .toggle-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
         }
 
         .toggle-label {
             font-size: 16px;
             color: #333;
+            font-weight: 500;
         }
 
         .switch {
@@ -54,6 +138,7 @@
             display: inline-block;
             width: 60px;
             height: 34px;
+            margin-left: 10px;
         }
 
         .switch input {
@@ -84,6 +169,7 @@
             background-color: white;
             transition: 0.4s;
             border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         input:checked + .slider {
@@ -99,38 +185,43 @@
             font-size: 14px;
             margin-top: 8px;
             text-align: center;
+            padding: 5px;
         }
 
-        /* Media Queries for Mobile Devices */
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
+        #pinStatus {
+            color: red;
+            display: none;
+            margin-top: 10px;
+            font-size: 14px;
+        }
 
+        @media (max-width: 480px) {
             .container {
                 padding: 15px;
+                margin: 10px;
             }
 
-            h1 img {
-                max-width: 90%; /* Adjust image size for smaller screens */
+            .input-container {
+                gap: 10px;
+            }
+
+            input[type="password"],
+            input[type="text"] {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .toggle-card {
+                padding: 8px;
             }
 
             .toggle-label {
-                font-size: 14px; /* Smaller font size for mobile */
-            }
-
-            .switch {
-                width: 50px;
-                height: 28px;
-            }
-
-            .slider:before {
-                height: 22px;
-                width: 22px;
-            }
-
-            input:checked + .slider:before {
-                transform: translateX(22px);
+                font-size: 14px;
             }
 
             .status-message {
@@ -142,84 +233,135 @@
 <body>
     <div class="container">
         <h1><img src="hma.png" alt="Logo"></h1>
-        <div class="toggle-card">
-            <span class="toggle-label">Lab Status</span>
-            <label class="switch">
-                <input type="checkbox" id="toggle1">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="status-message" id="status1"></div>
 
-        <div class="toggle-card">
-            <span class="toggle-label">GPU</span>
-            <label class="switch">
-                <input type="checkbox" id="toggle2">
-                <span class="slider"></span>
-            </label>
+        <div class="input-container">
+            <div class="password-wrapper">
+                <input type="password" id="pinInput" placeholder="Enter PIN">
+                <i class="fa fa-eye eye-icon" onclick="togglePassword()"></i>
+            </div>
+            <button onclick="verifyPIN()">Submit</button>
+            <p id="pinStatus">Invalid PIN. Try again.</p>
         </div>
-        <div class="status-message" id="status2"></div>
+
+        <div class="toggle-section" id="toggleSection">
+            <div class="toggle-card">
+                <span class="toggle-label">Lab Status</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle1">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="status-message" id="status1"></div>
+
+            <div class="toggle-card">
+                <span class="toggle-label">GPU</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle2">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="status-message" id="status2"></div>
+        </div>
     </div>
 
     <script>
-        let newValue = false;
+        // Your existing JavaScript remains the same
+        function updateToggleStatus(toggleId, status) {
+            document.getElementById(`status${toggleId}`).textContent = 
+                `Status: ${status ? 'ON' : 'OFF'} (Last updated: ${new Date().toLocaleTimeString()})`;
+        }
 
-function updateToggleStatus(toggleId, status) {
-    const statusElement = document.getElementById(`status${toggleId}`);
-    statusElement.textContent = `Status: ${status ? 'ON' : 'OFF'} (Last updated: ${new Date().toLocaleTimeString()})`;
-}
+        function sendToggleRequest(toggleId, status) {
+            const apiUrl = toggleId === 1 ? 'https://backend-website-api.vercel.app/update_lab' : 'https://backend-website-api.vercel.app/update_gpu';
 
-function sendToggleRequest(toggleId, status) {
-    const apiUrl = toggleId === 1 ? 'https://backend-website-api.vercel.app/update_lab' : 'https://backend-website-api.vercel.app/update_gpu';
+            newValue = status;
 
-    newValue = status;  // Directly assign boolean value
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: status, value: newValue })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`Toggle ${toggleId} request successful:`, data);
+                updateToggleStatus(toggleId, status);
+            })
+            .catch(error => {
+                console.error(`Toggle ${toggleId} request failed:`, error);
+                document.getElementById(`toggle${toggleId}`).checked = !status;
+                updateToggleStatus(toggleId, !status);
+            });
+        }
 
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: status, value: newValue })  // Send correct boolean values
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(`Toggle ${toggleId} request successful:`, data);
-        updateToggleStatus(toggleId, status);
-    })
-    .catch(error => {
-        console.error(`Toggle ${toggleId} request failed:`, error);
-        // Revert toggle state on error
-        document.getElementById(`toggle${toggleId}`).checked = !status;
-        updateToggleStatus(toggleId, !status);
-    });
-}
+        function fetchInitialState() {
+            fetch('https://backend-website-api.vercel.app/get_items/indication')
+                .then(response => response.json())
+                .then(data => {
+                    let keysValue = false;
+                    let gpuValue = false;
 
-// Fetch initial state from the server
-function fetchInitialState() {
-    fetch('https://backend-website-api.vercel.app/get_items/indication')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('toggle1').checked = data.keys;
-            document.getElementById('toggle2').checked = data.gpu;
-            updateToggleStatus(1, data.keys);
-            updateToggleStatus(2, data.gpu);
-        })
-        .catch(error => {
-            console.error('Failed to fetch initial state:', error);
-        });
-}
+                    data.forEach(item => {
+                        if (item.hasOwnProperty('keys')) keysValue = item.keys;
+                        if (item.hasOwnProperty('gpu')) gpuValue = item.gpu;
+                    });
 
-// Add event listeners to both toggles
-[1, 2].forEach(id => {
-    const toggle = document.getElementById(`toggle${id}`);
-    toggle.addEventListener('change', (e) => {
-        sendToggleRequest(id, e.target.checked);
-    });
-});
+                    document.getElementById('toggle1').checked = keysValue;
+                    document.getElementById('toggle2').checked = gpuValue;
+                    updateToggleStatus(1, keysValue);
+                    updateToggleStatus(2, gpuValue);
+                })
+                .catch(error => {
+                    console.error('Failed to fetch initial state:', error);
+                });
+        }
 
-// Fetch initial state when the page loads
-window.onload = fetchInitialState;
+        function verifyPIN() {
+            const pin = document.getElementById("pinInput").value;
 
+            fetch('https://backend-website-api.vercel.app/check_password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pin: pin })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.querySelector(".input-container").style.display = "none";
+                    document.getElementById("toggleSection").style.display = "block";
+                    fetchInitialState();
+                } else {
+                    document.getElementById("pinStatus").style.display = "block";
+                }
+            })
+            .catch(error => {
+                console.error('PIN verification failed:', error);
+                document.getElementById("pinStatus").style.display = "block";
+            });
+        }
+
+        function togglePassword() {
+            var input = document.getElementById("pinInput");
+            var icon = document.querySelector(".eye-icon");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        window.onload = function() {
+            [1, 2].forEach(id => {
+                document.getElementById(`toggle${id}`).addEventListener('change', (e) => {
+                    sendToggleRequest(id, e.target.checked);
+                });
+            });
+        };
     </script>
 </body>
 </html>
